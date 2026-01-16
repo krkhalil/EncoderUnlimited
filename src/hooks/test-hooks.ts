@@ -20,7 +20,7 @@ export async function beforeEachHook(_page: Page, testInfo: TestInfo): Promise<v
 
 /**
  * Teardown hook - runs after each test
- * Handles failure artifacts automatically
+ * Handles failure artifacts automatically and closes browser after every test
  */
 export async function afterEachHook(page: Page, testInfo: TestInfo): Promise<void> {
   // Handle failures
@@ -40,6 +40,17 @@ export async function afterEachHook(page: Page, testInfo: TestInfo): Promise<voi
     console.log(`✅ Test passed: ${testInfo.title}`);
   } else if (testInfo.status === 'skipped') {
     console.log(`⏭️  Test skipped: ${testInfo.title}`);
+  }
+
+  // Close browser after every test (pass or fail)
+  // Configurable via BROWSER_CLOSE_DELAY_MS environment variable (set to 0 to disable)
+  const closeDelay = parseInt(process.env.BROWSER_CLOSE_DELAY_MS || '5000', 10);
+  if (closeDelay > 0) {
+    // Run in background - don't wait for it to complete
+    // This allows the test to finish while browser closes after delay
+    FailureHandler.closeBrowserAfterTest(page, closeDelay, testInfo.status).catch(err => {
+      console.error('Error in background browser close:', err);
+    });
   }
 }
 

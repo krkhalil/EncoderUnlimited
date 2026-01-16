@@ -193,10 +193,18 @@ test.describe('PakWheels Homepage Tests', () => {
     await steps.thenIShouldSee('.car-card, .listing-card, .featured-car, [class*="car"], [class*="listing"]');
   });
 
-  // Automatic failure handling
+  // Automatic failure handling and browser close
   test.afterEach(async ({ page }, testInfo) => {
     if (testInfo.status === 'failed' || testInfo.status === 'timedOut') {
       await FailureHandler.handleFailureComprehensive(page, testInfo);
+    }
+    
+    // Close browser after every test (pass or fail)
+    const closeDelay = parseInt(process.env.BROWSER_CLOSE_DELAY_MS || '5000', 10);
+    if (closeDelay > 0) {
+      FailureHandler.closeBrowserAfterTest(page, closeDelay, testInfo.status).catch(err => {
+        console.error('Error in background browser close:', err);
+      });
     }
   });
 });

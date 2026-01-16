@@ -2,7 +2,7 @@
   "name": "production",
   "baseURL": "https://www.example.com",
   "apiURL": "https://api.example.com",
-  "timeout": 30000,
+  "timeout": 60000,
   "retries": 2,
   "workers": 1,
   "headless": true,

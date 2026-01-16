@@ -26,8 +26,18 @@ export class StepDefinitions {
    */
   async givenINavigateTo(url: string): Promise<void> {
     await allureLogger.step(`Given I navigate to "${url}"`, async () => {
-      await this.page.goto(url);
-      await this.webOps.waitForNavigation();
+      try {
+        // Navigate with networkidle to ensure page is fully loaded
+        // This is better for external sites that may have slow loading resources
+        await this.page.goto(url, { 
+          waitUntil: 'networkidle',
+          timeout: 60000 
+        });
+        allureLogger.info(`Successfully navigated to ${url}`);
+      } catch (error) {
+        allureLogger.error(`Failed to navigate to ${url}`, error);
+        throw error;
+      }
     });
   }
 

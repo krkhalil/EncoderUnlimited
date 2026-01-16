@@ -14,6 +14,12 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: envConfig.retries,
   workers: process.env.CI ? 1 : envConfig.workers,
+  // Set test timeout from environment config (default 60s for external sites)
+  timeout: envConfig.timeout || 60000,
+  // Set expect timeout
+  expect: {
+    timeout: 10000,
+  },
   reporter: [
     ['list'],
     ['allure-playwright', { outputFolder: 'allure-results' }],
@@ -25,6 +31,10 @@ export default defineConfig({
     screenshot: 'only-on-failure', // Capture screenshot on failure
     video: 'retain-on-failure', // Retain video on failure
     headless: envConfig.headless,
+    // Set navigation timeout from environment config
+    navigationTimeout: envConfig.timeout || 60000,
+    // Set action timeout
+    actionTimeout: 30000,
   },
   
   // Global setup and teardown

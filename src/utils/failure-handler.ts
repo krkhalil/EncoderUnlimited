@@ -163,9 +163,67 @@ export class FailureHandler {
   }
 
   /**
+   * Close browser after test with a delay
+   * This prevents browsers from staying open indefinitely after tests
+   * Only closes in headless mode - keeps browser open in headed mode for debugging
+   * @param page - Playwright page object
+   * @param delayMs - Delay in milliseconds before closing (default: 5 seconds)
+   * @param testStatus - Status of the test ('passed', 'failed', 'timedOut', etc.)
+   */
+  static async closeBrowserAfterTest(page: Page, delayMs: number = 5000, testStatus?: string): Promise<void> {
+    try {
+      const { allureLogger } = await import('./allure-logger.js');
+      const context = page.context();
+      
+      // Check if browser is already closed
+      if (!context || !context.browser()?.isConnected()) {
+        allureLogger.info('Browser already closed');
+        return;
+      }
+
+      // Check if we're in headed mode (not headless) - don't close if debugging
+      // In headed mode, user might want to inspect the page
+      const isHeadless = process.env.HEADLESS !== 'false' && 
+                        !process.env.PWDEBUG && 
+                        !process.env.DEBUG;
+      
+      if (!isHeadless) {
+        allureLogger.info('Browser kept open for debugging (headed mode)');
+        return;
+      }
+
+      const statusText = testStatus === 'failed' || testStatus === 'timedOut' 
+        ? 'after failure' 
+        : 'after test';
+      allureLogger.info(`Browser will close in ${delayMs / 1000} seconds ${statusText}`);
+      
+      // Wait for the specified delay to allow user to see the result
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+      
+      // Close the browser context
+      if (context && context.browser()?.isConnected()) {
+        await context.close();
+        allureLogger.info(`Browser closed ${statusText}`);
+      }
+    } catch (error) {
+      console.error('Error closing browser after test:', error);
+      // Don't throw - this is cleanup, not critical
+    }
+  }
+
+  /**
+   * Close browser after failure with a delay
+   * @deprecated Use closeBrowserAfterTest instead
+   * This method is kept for backward compatibility
+   */
+  static async closeBrowserAfterFailure(page: Page, delayMs: number = 5000): Promise<void> {
+    return this.closeBrowserAfterTest(page, delayMs, 'failed');
+  }
+
+  /**
    * Comprehensive failure handling with all artifacts
    */
-  static async handleFailureComprehensive(page: Page, testInfo: TestInfo): Promise<void> {
+  static async handleFailureComprehensive(page: Page, testInfo: TestInfo, closeBrowserDelayMs?: number): Promise<void> {
     if (testInfo.status === 'failed' || testInfo.status === 'timedOut') {
       const { allureLogger } = await import('./allure-logger.js');
       await allureLogger.step('Capturing failure artifacts', async () => {
@@ -199,6 +257,18 @@ export class FailureHandler {
           );
         }
       });
+
+      // Close browser after failure if delay is specified (default: 5 seconds)
+      // Only closes in headless mode - keeps browser open in headed mode for debugging
+      // Configurable via BROWSER_CLOSE_DELAY_MS environment variable (set to 0 to disable)
+      const closeDelay = closeBrowserDelayMs ?? parseInt(process.env.BROWSER_CLOSE_DELAY_MS || '5000', 10);
+      if (closeDelay > 0) {
+        // Run in background - don't wait for it to complete
+        // This allows the test to finish while browser closes after delay
+        this.closeBrowserAfterTest(page, closeDelay, testInfo.status).catch(err => {
+          console.error('Error in background browser close:', err);
+        });
+      }
     }
   }
 }

@@ -860,6 +860,35 @@ The framework automatically captures and attaches failure artifacts to Allure re
 4. **Page HTML**: HTML snapshot of the page at failure
 5. **Error Details**: Complete error message, stack trace, and test metadata
 
+### Browser Auto-Close After Tests
+
+To prevent browsers from staying open indefinitely, the framework automatically closes browsers after every test (pass or fail) with a configurable delay (default: 5 seconds).
+
+**Features:**
+- ✅ Automatically closes browser after **every test** (pass or fail) in **headless mode**
+- ✅ Keeps browser open in **headed mode** for debugging
+- ✅ Configurable delay before closing
+- ✅ Non-blocking - doesn't delay test completion
+- ✅ Prevents resource leaks in CI/CD environments
+
+**Configuration:**
+
+Set the delay (in milliseconds) via environment variable:
+
+```bash
+# Close browser after 10 seconds (default is 5 seconds)
+BROWSER_CLOSE_DELAY_MS=10000 npm run test:preview
+
+# Disable auto-close (keep browser open)
+BROWSER_CLOSE_DELAY_MS=0 npm run test:preview
+```
+
+**Behavior:**
+- **Headless mode**: Browser closes automatically after every test (pass or fail)
+- **Headed mode** (debugging): Browser stays open for manual inspection
+- **CI/CD**: Auto-close is enabled by default to prevent resource leaks
+- **Delay**: Default 5 seconds allows time to capture artifacts before closing
+
 ### How It Works
 
 Failure handling is **automatic** - no code changes needed in your tests:

@@ -410,7 +410,8 @@ export class WebOperations {
   async waitForNavigation(options?: { timeout?: number; waitUntil?: 'load' | 'domcontentloaded' | 'networkidle' }): Promise<void> {
     await allureLogger.step(`Wait for navigation`, async () => {
       allureLogger.info(`Waiting for navigation`);
-      await this.page.waitForLoadState(options?.waitUntil || 'networkidle', { timeout: options?.timeout });
+      const timeout = options?.timeout || 30000; // Default 30s for networkidle
+      await this.page.waitForLoadState(options?.waitUntil || 'networkidle', { timeout });
       allureLogger.info(`Navigation completed`);
     });
   }
