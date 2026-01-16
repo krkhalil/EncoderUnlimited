@@ -1,0 +1,15 @@
+{
+  "playwright.reuseBrowser": true,
+  "playwright.showTrace": true,
+  "playwright.env": {
+    "ENV": "preview"
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/allure-results": false,
+    "**/allure-report": false
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true
+}

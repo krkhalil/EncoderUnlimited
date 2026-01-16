@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.log
+.env
+.env.local
+.env.*
+config/.env
+playwright-report/
+test-results/
+allure-results/
+allure-report/
+playwright/.cache/
+.DS_Store
+*.tsbuildinfo

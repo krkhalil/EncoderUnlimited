@@ -1,0 +1,21 @@
+{
+  "name": "preview",
+  "baseURL": "https://preview.example.com",
+  "apiURL": "https://api-preview.example.com",
+  "timeout": 30000,
+  "retries": 1,
+  "workers": 2,
+  "headless": true,
+  "screenshot": "only-on-failure",
+  "video": "retain-on-failure",
+  "trace": "on-first-retry",
+  "credentials": {
+    "username": "preview_user",
+    "password": "preview_password"
+  },
+  "features": {
+    "enableDebugMode": true,
+    "enableScreenshots": true,
+    "enableVideos": true
+  }
+}

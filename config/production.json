@@ -1,0 +1,21 @@
+{
+  "name": "production",
+  "baseURL": "https://www.example.com",
+  "apiURL": "https://api.example.com",
+  "timeout": 30000,
+  "retries": 2,
+  "workers": 1,
+  "headless": true,
+  "screenshot": "only-on-failure",
+  "video": "retain-on-failure",
+  "trace": "on-first-retry",
+  "credentials": {
+    "username": "prod_user",
+    "password": "prod_password"
+  },
+  "features": {
+    "enableDebugMode": false,
+    "enableScreenshots": true,
+    "enableVideos": false
+  }
+}

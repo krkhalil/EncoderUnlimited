@@ -1,0 +1,21 @@
+{
+  "name": "staging",
+  "baseURL": "https://staging.example.com",
+  "apiURL": "https://api-staging.example.com",
+  "timeout": 30000,
+  "retries": 2,
+  "workers": 1,
+  "headless": true,
+  "screenshot": "only-on-failure",
+  "video": "retain-on-failure",
+  "trace": "on-first-retry",
+  "credentials": {
+    "username": "staging_user",
+    "password": "staging_password"
+  },
+  "features": {
+    "enableDebugMode": true,
+    "enableScreenshots": true,
+    "enableVideos": true
+  }
+}
