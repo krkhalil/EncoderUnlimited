@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run secret scanner before commit
+echo "🔍 Running secret scanner..."
+npm run scan:secrets
+
+# If scan fails, block the commit
+if [ $? -ne 0 ]; then
+  echo "❌ Secret scan failed! Commit blocked."
+  echo "Please remove sensitive information before committing."
+  exit 1
+fi
+
+echo "✅ Secret scan passed. Proceeding with commit..."

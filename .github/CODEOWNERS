@@ -1,0 +1,33 @@
+# CODEOWNERS file
+# This file defines code owners who must approve PRs
+# 
+# Format: <file-pattern> @username1 @username2
+# 
+# Lines starting with # are comments
+# Order matters - last matching pattern wins
+
+# Require approvals from team leads for all changes
+* @team-leads
+
+# Configuration files require security team approval
+/config/*.json @security-team
+/src/config/*.ts @security-team
+
+# Secrets and security-related files
+/scripts/scan-secrets.js @security-team
+/.github/workflows/secret-scan.yml @security-team
+
+# Core framework changes require senior developers
+/src/core/* @senior-developers
+/src/utils/* @senior-developers
+
+# Test files can be reviewed by any team member
+/tests/* @team-members
+
+# Documentation
+*.md @documentation-team
+
+# Note: Replace @team-leads, @security-team, etc. with actual GitHub usernames or teams
+# Example:
+# * @john-doe @jane-smith
+# /config/*.json @security-team

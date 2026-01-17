@@ -1,0 +1,64 @@
+name: PR Approval Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches:
+      - main
+      - master
+
+jobs:
+  check-approvals:
+    name: Verify PR Approvals
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Check PR approvals
+        id: check-approvals
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: reviews } = await github.rest.pulls.listReviews({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+            });
+            
+            // Count unique approvals (excluding own reviews)
+            const approvals = reviews
+              .filter(review => review.state === 'APPROVED')
+              .map(review => review.user.login)
+              .filter((login, index, self) => self.indexOf(login) === index);
+            
+            const approvalCount = approvals.length;
+            const requiredApprovals = 2;
+            
+            console.log(`Current approvals: ${approvalCount}`);
+            console.log(`Required approvals: ${requiredApprovals}`);
+            console.log(`Approved by: ${approvals.join(', ') || 'None'}`);
+            
+            if (approvalCount < requiredApprovals) {
+              core.setFailed(`❌ PR requires ${requiredApprovals} approvals, but only has ${approvalCount}.`);
+              return false;
+            }
+            
+            console.log(`✅ PR has ${approvalCount} approval(s), requirement met!`);
+            return true;
+      
+      - name: Comment on PR
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '⚠️ **This PR requires 2 approvals before it can be merged.**\n\nPlease wait for 2 reviewers to approve this PR.'
+            });

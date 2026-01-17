@@ -30,6 +30,8 @@
 | 🔧 **Extensible Architecture** | Easy to extend with custom tools and utilities |
 | 🎬 **Auto Failure Handling** | Automatic screenshot, video, and trace capture on test failures |
 | 🔄 **Browser Management** | Automatic browser cleanup to prevent resource leaks |
+| 🛡️ **Security Protection** | Pre-commit hooks and CI checks to prevent sensitive data commits |
+| 🔒 **Branch Protection** | Require 2 approvals before merging to main branch |
 
 ---
 
@@ -667,6 +669,30 @@ npm run dev                      # Development mode
 npm run mcp:server               # Start MCP server
 npm run mcp:client               # Run MCP client
 ```
+
+---
+
+## 🛡️ Security & Branch Protection
+
+### Secret Scanning
+
+The framework includes automatic secret scanning to prevent sensitive information from being committed:
+
+- **Pre-commit hook**: Scans before every commit
+- **CI/CD check**: Scans on every push/PR
+- **Manual scan**: Run `npm run scan:secrets` anytime
+
+See [SECURITY_SETUP.md](./SECURITY_SETUP.md) for details.
+
+### Branch Protection
+
+The main branch is protected with:
+- ✅ **2 approvals required** before merging
+- ✅ **Secret scan must pass**
+- ✅ **CI/CD checks must pass**
+- ✅ **Direct pushes blocked**
+
+See [BRANCH_PROTECTION_SETUP.md](./BRANCH_PROTECTION_SETUP.md) for setup instructions.
 
 ---
 

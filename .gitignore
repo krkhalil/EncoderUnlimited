@@ -12,3 +12,12 @@ allure-report/
 playwright/.cache/
 .DS_Store
 *.tsbuildinfo
+
+# Security - prevent committing sensitive files
+*.secret.*
+*.key
+*.pem
+*.p12
+*.pfx
+secrets/
+.secrets/

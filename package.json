@@ -30,7 +30,9 @@
     "allure:serve": "allure serve allure-results",
     "mcp:server": "tsx src/mcp/server.ts",
     "mcp:client": "tsx src/mcp/client.ts",
-    "dev": "tsx watch src/index.ts"
+    "dev": "tsx watch src/index.ts",
+    "scan:secrets": "node scripts/scan-secrets.js",
+    "prepare": "node -e \"try { require('husky').install() } catch (e) {}\""
   },
   "keywords": [
     "automation",
